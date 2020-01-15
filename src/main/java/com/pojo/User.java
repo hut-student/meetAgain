@@ -1,13 +1,14 @@
 package com.pojo;
 
 
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import com.baomidou.mybatisplus.annotation.TableId;
 
 public class User implements Serializable {
 
-    @Tableid("u_id")
+    @TableId("u_id")
     private int uId;
     private String uName;           //用户名
     private String upw;             //密码
