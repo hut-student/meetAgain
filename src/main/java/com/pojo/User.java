@@ -1,17 +1,19 @@
 package com.pojo;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class User implements Serializable {
 
     @TableId("u_id")
     private int uId;
     private String uName;           //用户名
-    private String upw;             //密码
+    private String uPw;             //密码
     private int uSex;               //性别
     private LocalDate uBirthday;    //出生年月
     private String uHeadPortrait;   //头像
@@ -20,8 +22,13 @@ public class User implements Serializable {
     private String uCity;           //市
     private String uDistrict;       //区
     private String uAddress;        //详细地址
-    private String uQQ;             //QQ登陆字段
+    private String uQq;             //QQ登陆字段
+
+    @TableField("u_wechat")
     private String uWeChat;         //微信登陆
+    private String uMicroblog;      //微博登陆
+    private int uVolunteer;         //是否志愿者
+    private LocalDateTime uUpdateTime;  //更新时间
 
     public int getuId() {
         return uId;
@@ -39,12 +46,12 @@ public class User implements Serializable {
         this.uName = uName;
     }
 
-    public String getUpw() {
-        return upw;
+    public String getuPw() {
+        return uPw;
     }
 
-    public void setUpw(String upw) {
-        this.upw = upw;
+    public void setuPw(String uPw) {
+        this.uPw = uPw;
     }
 
     public int getuSex() {
@@ -111,12 +118,12 @@ public class User implements Serializable {
         this.uAddress = uAddress;
     }
 
-    public String getuQQ() {
-        return uQQ;
+    public String getuQq() {
+        return uQq;
     }
 
-    public void setuQQ(String uQQ) {
-        this.uQQ = uQQ;
+    public void setuQq(String uQq) {
+        this.uQq = uQq;
     }
 
     public String getuWeChat() {
@@ -127,12 +134,12 @@ public class User implements Serializable {
         this.uWeChat = uWeChat;
     }
 
-    public String getuM() {
-        return uM;
+    public String getuMicroblog() {
+        return uMicroblog;
     }
 
-    public void setuM(String uM) {
-        this.uM = uM;
+    public void setuMicroblog(String uMicroblog) {
+        this.uMicroblog = uMicroblog;
     }
 
     public int getuVolunteer() {
@@ -143,16 +150,11 @@ public class User implements Serializable {
         this.uVolunteer = uVolunteer;
     }
 
-    public LocalDate getuUpdateTime() {
+    public LocalDateTime getuUpdateTime() {
         return uUpdateTime;
     }
 
-    public void setuUpdateTime(LocalDate uUpdateTime) {
+    public void setuUpdateTime(LocalDateTime uUpdateTime) {
         this.uUpdateTime = uUpdateTime;
     }
-
-    private String uM;              //微博登陆
-    private int uVolunteer;         //是否志愿者
-    private LocalDate uUpdateTime;  //更新时间
-
 }
