@@ -24,8 +24,10 @@ public class UserService extends ServiceImpl<UserDAO, User> {
      * @return
      */
     public User teleLoginUser(String tele, String pw){
-        return userDAO.TeleLogin(tele, pw);
+        return userDAO.TelePwLogin(tele, pw);
     }
+
+
 
 
 }
