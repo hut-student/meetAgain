@@ -9,6 +9,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,6 +22,11 @@ public class TeleService {
     @Autowired
     private UserDAO userDAO;
 
+    //检查是否有这个用户
+    public boolean selectUser(String tele){
+        return (userDAO.findOneUser(tele) == null) ? false : true;
+    }
+
     //电话号码登录
     public User showOneUser(String tele) {
         return userDAO.TeleLogin(tele);
@@ -28,12 +34,12 @@ public class TeleService {
 
     //验证码登录
     public User teleLogin(String tele, String code) {
-        return userDAO.judgeYZM(tele, code) ? userDAO.TeleLogin(tele) : null;
+        return userDAO.judgeYZM(tele, code) != null ? userDAO.TeleLogin(tele) : null;
     }
 
     //验证码注册
     public boolean teleRegister(String tele, String code) {
-        return userDAO.judgeYZM(tele, code)? userDAO.registerUser(tele, UUID.randomUUID().toString(), "用户" + MyMiniUtils.randomNumber("0123456789", 4)) : false;
+        return userDAO.judgeYZM(tele, code) != null ? userDAO.registerUser(tele, UUID.randomUUID().toString(), "用户" + MyMiniUtils.randomNumber("0123456789", 4), LocalDateTime.now()) : false;
     }
 
     //发送验证码
@@ -43,7 +49,7 @@ public class TeleService {
         String method = "POST";
         String appcode = "bd6c0dc8a0af423e997f402716706003";
         String code = MyMiniUtils.randomNumber("0123456789", 6);
-        userDAO.addTemYZM(tele, code);
+        userDAO.addTemYZM(tele, code, LocalDateTime.now());
         System.out.println("验证码是" + code);
         //userDAO.saveYZM(tele, code);
         Map<String, String> headers = new HashMap<String, String>();

@@ -1,6 +1,7 @@
 package com.pojo;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 public class User implements Serializable {
 
-    @TableId("u_id")
+    @TableId(value = "u_id", type = IdType.AUTO)
     private int uId;
     private String uName;           //用户名
     private String uPw;             //密码
@@ -23,7 +24,6 @@ public class User implements Serializable {
     private String uDistrict;       //区
     private String uAddress;        //详细地址
     private String uQq;             //QQ登陆字段
-
     @TableField("u_wechat")
     private String uWeChat;         //微信登陆
     private String uMicroblog;      //微博登陆

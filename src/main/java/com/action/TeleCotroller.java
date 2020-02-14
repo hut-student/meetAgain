@@ -4,10 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.pojo.User;
 import com.service.TeleService;
 import com.service.UserService;
+import com.utils.MyMiniUtils;
+import com.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -19,25 +24,36 @@ public class TeleCotroller {
 
 
     @RequestMapping("yzm")
-    public String yzmSend(String tele){
-        return teleService.yzmSend(tele);
+    public ResponseBean yzmSend(String tele) {
+        return new ResponseBean(Long.valueOf(teleService.yzmSend(tele).substring(16,21)), "ok", null);
     }
 
-    @RequestMapping("teleRegister")
-    public String register(String tele, String code){
-        if(teleService.teleRegister(tele, code)){
-            return JSON.toJSONString(teleService.showOneUser(tele));
-        }else{
-            return "{\"return_code\":\"5001\"}"; //验证码输入错误
+
+    /**
+     * 电话号码注册以及登陆
+     *
+     * @param tele
+     * @param code
+     * @return
+     */
+    @RequestMapping("teleLoginOrRegister")
+    public ResponseBean login(String tele, String code) {
+        if (teleService.selectUser(tele)) {
+            User user = teleService.teleLogin(tele, code);
+            if (user != null){
+                return new ResponseBean(200, "ok", MyMiniUtils.getEncryptString(String.valueOf(user.getuId()), System.currentTimeMillis()), user);
+            }
+            return new ResponseBean(400, "ok", null);
+        }
+        if (teleService.teleRegister(tele, code)) {
+            User user = teleService.showOneUser(tele);
+            return new ResponseBean(200, "ok", MyMiniUtils.getEncryptString(String.valueOf(user.getuId()), System.currentTimeMillis()), user);
+        } else {
+            return new ResponseBean(400, "ok", null);//验证码输入错误
         }
     }
-    @RequestMapping("teleLogin")
-    public String login(String tele, String code){
-        User user = teleService.teleLogin(tele, code);
-        if (user != null)
-            return JSON.toJSONString(user);
-        return "{\"return_code\":\"5001\"}";
-    }
+
+
 
 
 }

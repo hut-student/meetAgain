@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.dao.NewsReplyDAO">
+    <sql id="attribute">xwr_id,xwc_id,xwr_floor,from_uid,u_head_portrait,to_uid,r_comment,r_time,r_floor</sql>
+
+    <select id="selectReplyByCommendId" resultType="com.pojo.NewsReply">
+        SELECT xwr_id,xwc_id,xwr_floor,from_uid,u_name as from_uname,u_head_portrait,to_uid,r_comment,r_time,r_floor
+          FROM xw_reply , USER
+            WHERE xwc_id = #{id} and xw_reply.from_uid = USER.u_id
+              order by r_floor asc
+    </select>
+
+</mapper>

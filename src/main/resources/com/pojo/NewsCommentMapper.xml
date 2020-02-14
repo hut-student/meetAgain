@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.dao.NewsCommentDAO">
+    <sql id="comment">
+        xwc_id,xw_comments.u_id,u_name,u_head_portrait,xw_id,xwc_comment,xwc_time,xwc_floor
+    </sql>
+
+    <select id="selectByNewId" resultType="com.pojo.NewsComment">
+        SELECT
+          xwc_id,xw_comments.u_id,u_name,u_head_portrait,xw_id,xwc_comment,xwc_time,xwc_floor
+        FROM xw_comments,user
+        WHERE xw_id = #{newsId} and xw_comments.u_id = USER.u_id
+        order by xwc_floor asc
+    </select>
+
+
+</mapper>
