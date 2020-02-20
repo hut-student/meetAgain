@@ -25,16 +25,9 @@ public class NewsComment implements Serializable {
     private String uName;
     @TableField(exist = false)
     private String uHeadPortrait;
+    @TableField(exist = false)
+    private int replySum;
 
-    public NewsComment() {
-    }
-
-    public NewsComment(int uId, String xwId, String xwcComment, LocalDateTime xwcTime) {
-        this.uId = uId;
-        this.xwId = xwId;
-        this.xwcComment = xwcComment;
-        this.xwcTime = xwcTime;
-    }
 
     @Override
     public String toString() {
@@ -48,7 +41,26 @@ public class NewsComment implements Serializable {
                 ", time=" + time +
                 ", uName='" + uName + '\'' +
                 ", uHeadPortrait='" + uHeadPortrait + '\'' +
+                ", replySum=" + replySum +
                 '}';
+    }
+
+    public NewsComment() {
+    }
+
+    public NewsComment(int uId, String xwId, String xwcComment, LocalDateTime xwcTime) {
+        this.uId = uId;
+        this.xwId = xwId;
+        this.xwcComment = xwcComment;
+        this.xwcTime = xwcTime;
+    }
+
+    public int getReplySum() {
+        return replySum;
+    }
+
+    public void setReplySum(int replySum) {
+        this.replySum = replySum;
     }
 
     public String getuHeadPortrait() {

@@ -1,14 +1,14 @@
 package com.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dao.NewsReplyDAO;
 import com.dao.UserDAO;
 import com.pojo.NewsReply;
+import com.pojo.User;
 import com.utils.MyMiniUtils;
 import com.utils.MyPage;
 import com.vo.ResponseBean;
@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 @Service
 public class NewsReplyService extends ServiceImpl<NewsReplyDAO, NewsReply> {
@@ -40,20 +38,33 @@ public class NewsReplyService extends ServiceImpl<NewsReplyDAO, NewsReply> {
         return new ResponseBean(200, "ok",new MyPage<NewsReply>().iPageToMyPage(replyList));
     }
 
-    //添加一条评论
+    //添加一条回复
     public ResponseBean addOneReply(int xwcId, int xwrFloor, int fromUid, int toUid, String commed) {
         NewsReply newsReply = new NewsReply(xwcId, xwrFloor, fromUid, toUid, commed, LocalDateTime.now());
+        int a;
         synchronized (this) {
             Integer floor = newsReplyDAO.selectMaxReplyFloor(xwcId);
             if (floor == null)
                 newsReply.setrFloor(0);
             else
                 newsReply.setrFloor(floor + 1);
-            if (newsReplyDAO.insert(newsReply) == 1)
-                return new ResponseBean(200, "评论成功", MyMiniUtils.getEncryptString(String.valueOf(fromUid), System.currentTimeMillis()), null);
+            a = newsReplyDAO.insert(newsReply);
+        }
+            if (a == 1){
+                QueryWrapper<NewsReply> queryWrapper = new QueryWrapper();
+                queryWrapper.eq("xwc_id", newsReply.getXwcId());
+                queryWrapper.eq("r_floor", newsReply.getrFloor());
+                newsReply.setXwrId(newsReplyDAO.selectOne(queryWrapper).getXwrId());
+                newsReply.setTime(MyMiniUtils.timeMillisChangeLocalDateTime(newsReply.getrTime()));
+                User fromUser = userDAO.selectById(newsReply.getFromUid());
+                newsReply.setFromUname(fromUser.getuName());
+                newsReply.setuHeadPortrait(fromUser.getuHeadPortrait());
+                newsReply.setToUname(userDAO.selectById(newsReply.getToUid()).getuName());
+                return new ResponseBean(200, "评论成功", MyMiniUtils.getEncryptString(String.valueOf(fromUid), System.currentTimeMillis()), newsReply);
+            }
             else
                 return new ResponseBean(201, "评论失败，请重试", null);
-        }
+
     }
 
 

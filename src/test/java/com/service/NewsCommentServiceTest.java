@@ -1,4 +1,4 @@
-package com.action;
+package com.service;
 
 import com.boot.MainBoot;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MainBoot.class)
-class NewsControllerTest {
+class NewsCommentServiceTest {
 
     @Autowired
-    private NewsController newsController;
+    private NewsCommentService newsCommentService;
 
     @Test
-    void fenye() {
-        System.out.println(newsController.addOneReply(2,1,1,2,"abc"));
+    void addOneCommet() {
+        System.out.println(newsCommentService.addOneCommet("震惊两亿人", "2","我猜不信类"));
+
     }
 }

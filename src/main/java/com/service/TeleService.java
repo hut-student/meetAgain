@@ -7,6 +7,7 @@ import com.utils.MyMiniUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,8 +23,11 @@ public class TeleService {
     @Autowired
     private UserDAO userDAO;
 
+    @Value("${tele.appcode}")
+    private String teleAppcode;
+
     //检查是否有这个用户
-    public boolean selectUser(String tele){
+    public boolean selectUser(String tele) {
         return (userDAO.findOneUser(tele) == null) ? false : true;
     }
 
@@ -39,7 +43,9 @@ public class TeleService {
 
     //验证码注册
     public boolean teleRegister(String tele, String code) {
-        return userDAO.judgeYZM(tele, code) != null ? userDAO.registerUser(tele, UUID.randomUUID().toString(), "用户" + MyMiniUtils.randomNumber("0123456789", 4), LocalDateTime.now()) : false;
+        synchronized (this) {
+            return userDAO.judgeYZM(tele, code) != null ? userDAO.registerUser(tele, UUID.randomUUID().toString(), "用户" + MyMiniUtils.randomNumber("0123456789", 4), LocalDateTime.now()) : false;
+        }
     }
 
     //发送验证码
@@ -47,7 +53,7 @@ public class TeleService {
         String host = "http://dingxin.market.alicloudapi.com";
         String path = "/dx/sendSms";
         String method = "POST";
-        String appcode = "bd6c0dc8a0af423e997f402716706003";
+        String appcode = teleAppcode;
         String code = MyMiniUtils.randomNumber("0123456789", 6);
         userDAO.addTemYZM(tele, code, LocalDateTime.now());
         System.out.println("验证码是" + code);

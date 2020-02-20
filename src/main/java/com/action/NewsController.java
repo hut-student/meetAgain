@@ -50,12 +50,15 @@ public class NewsController {
      * 添加新闻评论
      * @param newsId    新闻id
      * @param uId       用户id
-     * @param commend   评论内容
+     * @param comment   评论内容
      * @return
      */
     @RequestMapping("addComment")
-    public ResponseBean addOneComment(String newsId, String uId, String commend){
-        return newsCommentService.addOneCommet(newsId,uId,commend);
+    public ResponseBean addOneComment(String newsId, String uId, String comment){
+        if(newsId != null && newsId.isEmpty() == false && uId != null && uId.isEmpty() == false && comment != null && comment.isEmpty() == false)
+            return newsCommentService.addOneCommet(newsId,uId,comment);
+        else
+            return new ResponseBean(202,"缺少必要参数",null);
     }
 
     /**
@@ -64,12 +67,15 @@ public class NewsController {
      * @param xwrFloor  回复的哪一层
      * @param fromUid   自己的id
      * @param toUid     目标对象的id
-     * @param commed    回复的内容
+     * @param comment    回复的内容
      * @return
      */
     @RequestMapping("addReply")
-    public ResponseBean addOneReply(int xwcId, int xwrFloor, int fromUid, int toUid, String commed){
-        return newsReplyService.addOneReply(xwcId, xwrFloor, fromUid, toUid, commed);
+    public ResponseBean addOneReply(int xwcId, int xwrFloor, int fromUid, int toUid, String comment){
+        if(comment != null && comment.isEmpty() == false)
+            return newsReplyService.addOneReply(xwcId, xwrFloor, fromUid, toUid, comment);
+        else
+            return new ResponseBean(202,"缺少必要参数",null);
     }
 
 }

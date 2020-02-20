@@ -8,8 +8,8 @@
 
     <select id="selectReplyByCommendId" resultType="com.pojo.NewsReply">
         SELECT xwr_id,xwc_id,xwr_floor,from_uid,u_name as from_uname,u_head_portrait,to_uid,r_comment,r_time,r_floor
-          FROM xw_reply , USER
-            WHERE xwc_id = #{id} and xw_reply.from_uid = USER.u_id
+          FROM xw_reply , user
+            WHERE xwc_id = #{id} and xw_reply.from_uid = user.u_id
               order by r_floor asc
     </select>
 

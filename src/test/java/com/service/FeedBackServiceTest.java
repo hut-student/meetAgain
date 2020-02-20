@@ -1,4 +1,4 @@
-package com.action;
+package com.service;
 
 import com.boot.MainBoot;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MainBoot.class)
-class NewsControllerTest {
+class FeedBackServiceTest {
 
     @Autowired
-    private NewsController newsController;
+    private FeedBackService feedBackService;
 
     @Test
-    void fenye() {
-        System.out.println(newsController.addOneReply(2,1,1,2,"abc"));
+    void insertFeedBack() {
+        System.out.println(feedBackService.insertFeedBack(1,1582185290643L, "129E84EA13593B02E301442D69D1E0E7", "{\"fContent\":\"快点搞\",\"uId\":1}"));
     }
 }

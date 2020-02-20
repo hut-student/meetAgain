@@ -22,4 +22,8 @@ public interface NewsCommentDAO extends BaseMapper<NewsComment> {
     @Select("select Max(xwc_floor) from xw_comments where xw_id=#{xwId}")
     public Integer selectCommentMaxFloor(String xwId);
 
+    //查找当前新闻评论的回复数
+    @Select("SELECT COUNT(r_floor) from xw_reply where xwc_id = #{xwcId}")
+    public int selectReplySum(int xwcId);
+
 }

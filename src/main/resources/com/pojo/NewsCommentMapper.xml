@@ -12,7 +12,7 @@
         SELECT
           xwc_id,xw_comments.u_id,u_name,u_head_portrait,xw_id,xwc_comment,xwc_time,xwc_floor
         FROM xw_comments,user
-        WHERE xw_id = #{newsId} and xw_comments.u_id = USER.u_id
+        WHERE xw_id = #{newsId} and xw_comments.u_id = user.u_id
         order by xwc_floor asc
     </select>
 

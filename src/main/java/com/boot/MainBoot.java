@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 
-//(exclude = {DataSourceAutoConfiguration.class})
 @SpringBootApplication
 @ComponentScan({"com.dao","com.service","com.action","com.config"})
 @MapperScan("com.dao")

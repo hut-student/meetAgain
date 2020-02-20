@@ -6,17 +6,17 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class User implements Serializable {
 
     @TableId(value = "u_id", type = IdType.AUTO)
     private int uId;
-    private String uName;           //用户名
+    private String uName;           //真实姓名
+    private String uRealName;       //用户昵称
     private String uPw;             //密码
-    private int uSex;               //性别
-    private LocalDate uBirthday;    //出生年月
+    private Integer uSex;               //性别
+    private String uBirthday;    //出生年月
     private String uHeadPortrait;   //头像
     private String uTele;           //电话
     private String uProvince;       //省份
@@ -27,8 +27,49 @@ public class User implements Serializable {
     @TableField("u_wechat")
     private String uWeChat;         //微信登陆
     private String uMicroblog;      //微博登陆
-    private int uVolunteer;         //是否志愿者
+    private Integer uVolunteer;         //是否志愿者
     private LocalDateTime uUpdateTime;  //更新时间
+    private String uSignature;      //个性签名
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uId=" + uId +
+                ", uName='" + uName + '\'' +
+                ", uRealName='" + uRealName + '\'' +
+                ", uPw='" + uPw + '\'' +
+                ", uSex=" + uSex +
+                ", uBirthday=" + uBirthday +
+                ", uHeadPortrait='" + uHeadPortrait + '\'' +
+                ", uTele='" + uTele + '\'' +
+                ", uProvince='" + uProvince + '\'' +
+                ", uCity='" + uCity + '\'' +
+                ", uDistrict='" + uDistrict + '\'' +
+                ", uAddress='" + uAddress + '\'' +
+                ", uQq='" + uQq + '\'' +
+                ", uWeChat='" + uWeChat + '\'' +
+                ", uMicroblog='" + uMicroblog + '\'' +
+                ", uVolunteer=" + uVolunteer +
+                ", uUpdateTime=" + uUpdateTime +
+                ", uSignature='" + uSignature + '\'' +
+                '}';
+    }
+
+    public String getuRealName() {
+        return uRealName;
+    }
+
+    public void setuRealName(String uRealName) {
+        this.uRealName = uRealName;
+    }
+
+    public String getuSignature() {
+        return uSignature;
+    }
+
+    public void setuSignature(String uSignature) {
+        this.uSignature = uSignature;
+    }
 
     public int getuId() {
         return uId;
@@ -54,19 +95,19 @@ public class User implements Serializable {
         this.uPw = uPw;
     }
 
-    public int getuSex() {
+    public Integer getuSex() {
         return uSex;
     }
 
-    public void setuSex(int uSex) {
+    public void setuSex(Integer uSex) {
         this.uSex = uSex;
     }
 
-    public LocalDate getuBirthday() {
+    public String getuBirthday() {
         return uBirthday;
     }
 
-    public void setuBirthday(LocalDate uBirthday) {
+    public void setuBirthday(String uBirthday) {
         this.uBirthday = uBirthday;
     }
 
@@ -142,11 +183,11 @@ public class User implements Serializable {
         this.uMicroblog = uMicroblog;
     }
 
-    public int getuVolunteer() {
+    public Integer getuVolunteer() {
         return uVolunteer;
     }
 
-    public void setuVolunteer(int uVolunteer) {
+    public void setuVolunteer(Integer uVolunteer) {
         this.uVolunteer = uVolunteer;
     }
 

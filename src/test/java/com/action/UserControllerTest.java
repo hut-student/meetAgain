@@ -1,6 +1,7 @@
 package com.action;
 
 import com.boot.MainBoot;
+import com.utils.MyMiniUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MainBoot.class)
-class NewsControllerTest {
+class UserControllerTest {
 
     @Autowired
-    private NewsController newsController;
+    private UserController userController;
 
     @Test
-    void fenye() {
-        System.out.println(newsController.addOneReply(2,1,1,2,"abc"));
+    void verificationLogin() {
+        System.out.println(userController.verificationLogin("3",1581826297218L,"480F1BEEE2154F5924DC8067C301BA6B"));
     }
 }
