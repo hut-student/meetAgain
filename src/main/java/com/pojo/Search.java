@@ -3,16 +3,15 @@ package com.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.utils.MyMiniUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Search implements Serializable {
 
     @TableId(value = "s_id", type = IdType.AUTO)
     private int sId;
-
     private Integer uId;
     private Integer sType;
     private String sTitle;
@@ -23,7 +22,6 @@ public class Search implements Serializable {
     private String sCity;
     private String sDistrict;
     private String sAddress;
-
     @TableField("s_jw1")
     private String sJW1;    //地点的经纬度
     @TableField("s_jw2")
@@ -34,11 +32,22 @@ public class Search implements Serializable {
     private LocalDateTime sTime;    //发布时间
     private String sContent;    //发布内容
     private Integer sPriority;      //优先级
+    @TableField("s_age")
+    private Integer age;    //年龄
+
 
     @TableField(exist = false)
-    private Long time;
+    private String sendTime; //发布时间 自动填充
     @TableField(exist = false)
-    private Long lostTime;
+    private String time; //走失时间 自动填充
+    @TableField(exist = false)
+    private List<String> pictures;  //图片的路径集合
+    @TableField(exist = false)
+    private String header;
+    @TableField(exist = false)
+    private String nickName;
+    @TableField(exist = false)
+    private Integer commentNum;
 
     @Override
     public String toString() {
@@ -61,9 +70,18 @@ public class Search implements Serializable {
                 ", sTime=" + sTime +
                 ", sContent='" + sContent + '\'' +
                 ", sPriority=" + sPriority +
-                ", time=" + time +
-                ", lostTime=" + lostTime +
+                ", age=" + age +
+                ", sendTime='" + sendTime + '\'' +
+                ", time='" + time + '\'' +
+                ", pictures=" + pictures +
+                ", header='" + header + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", commentNum=" + commentNum +
                 '}';
+    }
+
+    public List<String> getPictures() {
+        return pictures;
     }
 
     public String getsDistrict() {
@@ -74,12 +92,36 @@ public class Search implements Serializable {
         this.sDistrict = sDistrict;
     }
 
-    public Long getLostTime() {
-        return lostTime;
+    public String getHeader() {
+        return header;
     }
 
-    public void setLostTime(Long lostTime) {
-        this.lostTime = lostTime;
+    public Integer getCommentNum() {
+        return commentNum;
+    }
+
+    public void setCommentNum(Integer commentNum) {
+        this.commentNum = commentNum;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public LocalDateTime getsLostTime() {
@@ -87,16 +129,28 @@ public class Search implements Serializable {
     }
 
     public void setsLostTime(LocalDateTime sLostTime) {
+        this.time = sLostTime.getYear() + "-" + sLostTime.getMonthValue() + "-" + sLostTime.getDayOfMonth();
         this.sLostTime = sLostTime;
-        this.lostTime = MyMiniUtils.timeMillisChangeLocalDateTime(sLostTime);
     }
 
-    public Long getTime() {
+    public String getSendTime() {
+        return sendTime;
+    }
+
+    public void setSendTime(String sendTime) {
+        this.sendTime = sendTime;
+    }
+
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Long time) {
+    public void setTime(String time) {
         this.time = time;
+    }
+
+    public void setPictures(List<String> pictures) {
+        this.pictures = pictures;
     }
 
     public int getsId() {
@@ -209,8 +263,8 @@ public class Search implements Serializable {
     }
 
     public void setsTime(LocalDateTime sTime) {
+        this.sendTime = sTime.getYear() + "-" + sTime.getMonthValue() + "-" + sTime.getDayOfMonth();
         this.sTime = sTime;
-        this.time = MyMiniUtils.timeMillisChangeLocalDateTime(sTime);
     }
 
     public String getsContent() {

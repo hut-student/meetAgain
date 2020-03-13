@@ -33,19 +33,28 @@ public class FeedBackService extends ServiceImpl<FeedBackDAO, FeedBack> {
 
 
     //提交反馈
-    public ResponseBean insertFeedBack(Integer uId, Long time, String enCode, String feedBackJson) {
+    public ResponseBean insertFeedBack(String feedBackJson, MultipartFile file) {
         FeedBack feedBack = JSON.parseObject(feedBackJson, FeedBack.class);
-        QueryWrapper queryWrapper = new QueryWrapper();
-        if (uId == null) {
-            ResponseBean responseBean = userService.userCheck(uId.toString(), time, enCode);
-            if (responseBean.getCode() != 000) {
-                return responseBean;
+        if(file.isEmpty() == false){
+            String newName;
+            try {
+                newName = MyMiniUtils.upLoadFile(file, feedBackDir);
+            } catch (Exception e) {
+                return new ResponseBean(403, "数据异常，提交失败", null);
             }
-            feedBack.setuId(uId);
-            queryWrapper.eq("u_id", feedBack.getuId());
+            feedBack.setfPhoto(newName);
         }
         feedBack.setfTime(LocalDateTime.now());
-        queryWrapper.orderByDesc("f_time");
+        if (feedBackDAO.insert(feedBack) == 1) {
+            return new ResponseBean(200, "提交成功", null);
+        } else {
+            return new ResponseBean(403, "数据异常，提交失败", null);
+        }
+    }
+
+    public ResponseBean insertFeedBack(String feedBackJson) {
+        FeedBack feedBack = JSON.parseObject(feedBackJson, FeedBack.class);
+        feedBack.setfTime(LocalDateTime.now());
         if (feedBackDAO.insert(feedBack) == 1) {
             return new ResponseBean(200, "提交成功", null);
         } else {
@@ -63,14 +72,5 @@ public class FeedBackService extends ServiceImpl<FeedBackDAO, FeedBack> {
         queryWrapper.eq("u_id", uId);
         queryWrapper.orderByDesc("f_time");
         return new ResponseBean(200, "查找成功", feedBackDAO.selectList(queryWrapper));
-    }
-
-    //上传图片
-    public ResponseBean uploadPhoto(MultipartFile file){
-        String newName = MyMiniUtils.upLoadFile(file, feedBackDir);
-        if(newName != null){
-            return new ResponseBean(200,"上传成功","https://" + webSite + feedBackDir + newName);
-        }
-        return new ResponseBean(403,"上传图片异常", null);
     }
 }

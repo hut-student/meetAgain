@@ -11,27 +11,21 @@ import java.time.LocalDateTime;
 public class FeedBack implements Serializable {
 
     @TableId(type = IdType.AUTO)
-    private Integer fId;
-    private Integer uId;
-    private String fContent;
-    private String fPhoto;
-    private String fTele;
-    private LocalDateTime fTime;
-
-    @TableField(exist = false)
-    private Long fTimeStamp;
+    private Integer fId; //id
+    private String fContent; //内容
+    private String fPhoto; //图片
+    private String fTele; //电话号码
+    private LocalDateTime fTime; // 时间
 
 
     @Override
     public String toString() {
         return "FeedBack{" +
                 "fId=" + fId +
-                ", uId=" + uId +
                 ", fContent='" + fContent + '\'' +
                 ", fPhoto='" + fPhoto + '\'' +
                 ", fTele='" + fTele + '\'' +
                 ", fTime=" + fTime +
-                ", fTimeStamp=" + fTimeStamp +
                 '}';
     }
 
@@ -41,14 +35,6 @@ public class FeedBack implements Serializable {
 
     public void setfId(Integer fId) {
         this.fId = fId;
-    }
-
-    public Integer getuId() {
-        return uId;
-    }
-
-    public void setuId(Integer uId) {
-        this.uId = uId;
     }
 
     public String getfContent() {
@@ -81,14 +67,6 @@ public class FeedBack implements Serializable {
 
     public void setfTime(LocalDateTime fTime) {
         this.fTime = fTime;
-        this.fTimeStamp = MyMiniUtils.timeMillisChangeLocalDateTime(fTime);
     }
 
-    public Long getfTimeStamp() {
-        return fTimeStamp;
-    }
-
-    public void setfTimeStamp(Long fTimeStamp) {
-        this.fTimeStamp = fTimeStamp;
-    }
 }

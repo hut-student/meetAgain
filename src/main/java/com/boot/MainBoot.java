@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
-@ComponentScan({"com.dao","com.service","com.action","com.config"})
+@ComponentScan({"com.dao","com.service","com.action","com.config","com.utils"})
 @MapperScan("com.dao")
 public class MainBoot {
     public static void main(String[] args) {
@@ -52,8 +52,5 @@ public class MainBoot {
         connector.setRedirectPort(443);
         return connector;
     }
-
-
-
 
 }

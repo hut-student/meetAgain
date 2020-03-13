@@ -19,15 +19,16 @@ public class FeedbackController {
 
     /**
      * 添加一条反馈
-     * @param uId
-     * @param time
-     * @param enCode
      * @param feedBackJson
      * @return
      */
     @RequestMapping("addOne")
-    public ResponseBean add(Integer uId, Long time, String enCode, String feedBackJson){
-            return feedBackService.insertFeedBack(uId, time, enCode, feedBackJson);
+    public ResponseBean add(String feedBackJson, MultipartFile file){
+        try {
+            return feedBackService.insertFeedBack(feedBackJson, file);
+        }catch (Exception e){
+            return feedBackService.insertFeedBack(feedBackJson);
+        }
     }
 
 
@@ -41,15 +42,5 @@ public class FeedbackController {
     @RequestMapping("find")
     public ResponseBean select(Integer uId, Long time, String enCode){
         return feedBackService.select(uId, time, enCode);
-    }
-
-    /**
-     * 上传图片
-     * @param file
-     * @return
-     */
-    @RequestMapping("uploadPhoto")
-    public ResponseBean uploadPhoto(MultipartFile file){
-        return feedBackService.uploadPhoto(file);
     }
 }

@@ -17,10 +17,15 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Value("${upload.feedBack.dir}")
     private String feedBack;
 
+    @Value("${upload.userFace.dir}")
+    private String userFace;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/www/headPhoto/**").addResourceLocations("file://" + headPhoto);
-        registry.addResourceHandler("/www/peoplePhoto/**").addResourceLocations("file://" + findPeople);
+        registry.addResourceHandler("/www/findPeople/**").addResourceLocations("file://" + findPeople);
         registry.addResourceHandler("/www/feedBack/**").addResourceLocations("file://" + feedBack);
+        registry.addResourceHandler("/www/userFace/**").addResourceLocations("file://" + userFace);
+
     }
 }

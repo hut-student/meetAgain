@@ -18,6 +18,6 @@ class UserServiceTest {
 
     @Test
     void updateUser() {
-        //System.out.println(userService.updateUser(""));
+        System.out.println(userService.joinGroup(2,2));
     }
 }

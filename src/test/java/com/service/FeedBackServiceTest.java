@@ -18,6 +18,6 @@ class FeedBackServiceTest {
 
     @Test
     void insertFeedBack() {
-        System.out.println(feedBackService.insertFeedBack(1,1582185290643L, "129E84EA13593B02E301442D69D1E0E7", "{\"fContent\":\"快点搞\",\"uId\":1}"));
+        //System.out.println(feedBackService.insertFeedBack(1,1582185290643L, "129E84EA13593B02E301442D69D1E0E7", "{\"fContent\":\"快点搞\",\"uId\":1}"));
     }
 }

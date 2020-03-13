@@ -12,6 +12,7 @@ public class User implements Serializable {
 
     @TableId(value = "u_id", type = IdType.AUTO)
     private int uId;
+    private String uUuid;           //用户号
     private String uName;           //真实姓名
     private String uRealName;       //用户昵称
     private String uPw;             //密码
@@ -35,11 +36,12 @@ public class User implements Serializable {
     public String toString() {
         return "User{" +
                 "uId=" + uId +
+                ", uUuid='" + uUuid + '\'' +
                 ", uName='" + uName + '\'' +
                 ", uRealName='" + uRealName + '\'' +
                 ", uPw='" + uPw + '\'' +
                 ", uSex=" + uSex +
-                ", uBirthday=" + uBirthday +
+                ", uBirthday='" + uBirthday + '\'' +
                 ", uHeadPortrait='" + uHeadPortrait + '\'' +
                 ", uTele='" + uTele + '\'' +
                 ", uProvince='" + uProvince + '\'' +
@@ -53,6 +55,14 @@ public class User implements Serializable {
                 ", uUpdateTime=" + uUpdateTime +
                 ", uSignature='" + uSignature + '\'' +
                 '}';
+    }
+
+    public String getuUuid() {
+        return uUuid;
+    }
+
+    public void setuUuid(String uUuid) {
+        this.uUuid = uUuid;
     }
 
     public String getuRealName() {

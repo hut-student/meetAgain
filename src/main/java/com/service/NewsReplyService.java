@@ -13,6 +13,7 @@ import com.utils.MyMiniUtils;
 import com.utils.MyPage;
 import com.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,13 +28,22 @@ public class NewsReplyService extends ServiceImpl<NewsReplyDAO, NewsReply> {
     @Autowired
     private UserDAO userDAO;
 
+    @Value("${web.site}")
+    private String webSite;
+
+    @Value("${upload.headPortrait.dir}")
+    private String headPhoto;
+
     //评论id查回复
     public ResponseBean selectReplyByCommedId(int xwcId, int page, int limit) {
         //封装分页参数
         Page p = new Page(page, limit);
         IPage<NewsReply> replyList = newsReplyDAO.selectReplyByCommendId(p, xwcId);
         for (NewsReply reply : replyList.getRecords()) {
+            User fromUser = userDAO.selectById(reply.getFromUid());
             reply.setToUname(userDAO.selectById(reply.getToUid()).getuName());
+            reply.setFromUname(fromUser.getuName());
+            reply.setuHeadPortrait("https://" + webSite + headPhoto + fromUser.getuHeadPortrait());
         }
         return new ResponseBean(200, "ok",new MyPage<NewsReply>().iPageToMyPage(replyList));
     }
@@ -58,7 +68,7 @@ public class NewsReplyService extends ServiceImpl<NewsReplyDAO, NewsReply> {
                 newsReply.setTime(MyMiniUtils.timeMillisChangeLocalDateTime(newsReply.getrTime()));
                 User fromUser = userDAO.selectById(newsReply.getFromUid());
                 newsReply.setFromUname(fromUser.getuName());
-                newsReply.setuHeadPortrait(fromUser.getuHeadPortrait());
+                newsReply.setuHeadPortrait("https://" + webSite + headPhoto + fromUser.getuHeadPortrait());
                 newsReply.setToUname(userDAO.selectById(newsReply.getToUid()).getuName());
                 return new ResponseBean(200, "评论成功", MyMiniUtils.getEncryptString(String.valueOf(fromUid), System.currentTimeMillis()), newsReply);
             }

@@ -15,6 +15,7 @@ import com.utils.MyPage;
 import com.vo.ResponseBean;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,12 @@ public class NewsCommentService extends ServiceImpl<NewsCommentDAO, NewsComment>
     @Autowired
     private UserDAO userDAO;
 
+    @Value("${web.site}")
+    private String webSite;
+
+    @Value("${upload.headPortrait.dir}")
+    private String headPhoto;
+
     /**
      * 根据新闻id来找评论
      *
@@ -40,6 +47,8 @@ public class NewsCommentService extends ServiceImpl<NewsCommentDAO, NewsComment>
         for (NewsComment newsComment : iPage.getRecords()
         ) {
             newsComment.setReplySum(newsCommentDAO.selectReplySum(newsComment.getXwcId()));
+            newsComment.setuHeadPortrait("https://" + webSite + headPhoto + newsComment.getuHeadPortrait());
+            newsComment.setuName(userDAO.selectById(newsComment.getuId()).getuName());
         }
         return new ResponseBean(200, "ok", new MyPage<NewsComment>().iPageToMyPage(iPage));
     }
@@ -70,7 +79,7 @@ public class NewsCommentService extends ServiceImpl<NewsCommentDAO, NewsComment>
                 newsComment.setXwcId(newsCommentDAO.selectOne(queryWrapper).getXwcId());
                 User user = userDAO.selectById(newsComment.getuId());
                 newsComment.setuName(user.getuName());
-                newsComment.setuHeadPortrait(user.getuHeadPortrait());
+                newsComment.setuHeadPortrait("https://" + webSite + headPhoto + user.getuHeadPortrait());
                 return new ResponseBean(200, "评论成功", MyMiniUtils.getEncryptString(uId, System.currentTimeMillis()), newsComment);
             } else
                 return new ResponseBean(201, "评论失败，请重试", null);

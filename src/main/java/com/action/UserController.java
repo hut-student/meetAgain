@@ -1,6 +1,10 @@
 package com.action;
 
+import com.pojo.SingleChat;
 import com.pojo.User;
+import com.service.SingleChatService;
+import com.service.UserFaceService;
+import com.service.UserRelationshipService;
 import com.service.UserService;
 import com.utils.MyMiniUtils;
 import com.vo.ResponseBean;
@@ -20,6 +24,15 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRelationshipService userRelationshipService;
+
+    @Autowired
+    private SingleChatService singleChatService;
+
+    @Autowired
+    private UserFaceService userFaceService;
 
     //验证登陆
     @RequestMapping("verificationLogin")
@@ -57,4 +70,32 @@ public class UserController {
         return userService.updateUser(uId, userJson);
     }
 
+    //获得用户公开信息
+    @RequestMapping("user/publicInfo")
+    public ResponseBean userPublic(String uIdListJson){
+        return userFaceService.selectUserList(uIdListJson);
+    }
+
+    //用户建立一个群
+    @RequestMapping("user/buildGroup")
+    public ResponseBean insertGroup(String groupJson){
+        return userService.insertGroupInfo(groupJson);
+    }
+
+    //用户加入一个群
+    @RequestMapping("user/joinGroup")
+    public ResponseBean joinGroup(int uId, int group){
+        return userService.joinGroup(uId, group);
+    }
+
+    //用户关注
+    @RequestMapping("user/follow")
+    public ResponseBean userRelationshipChange(Integer uId, Integer targetUid, Integer follow){
+        try {
+            return userService.userRelationshipChange(uId, targetUid, follow);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseBean(404, "参数异常", null);
+        }
+    }
 }

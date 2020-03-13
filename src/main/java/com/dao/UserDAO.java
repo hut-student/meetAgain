@@ -42,14 +42,15 @@ public interface UserDAO extends BaseMapper<User> {
     public User TeleLogin(String tele);
 
     //用户id登录
-    @Select("SELECT u_id,u_name,u_sex,u_birthday,u_head_portrait,u_tele,u_province,u_city,u_district,u_address,u_qq,u_wechat,u_microblog,u_volunteer,u_update_time FROM user WHERE u_id=#{uId}")
-    public User uIdLogin(String uId);
+//    @Select("SELECT u_id,u_name,u_sex,u_birthday,u_head_portrait,u_tele,u_province,u_city,u_district,u_address,u_qq,u_wechat,u_microblog,u_volunteer,u_update_time FROM user WHERE u_id=#{uId}")
+//    public User uIdLogin(String uId);
 
     //获得用户信息更新时间
     @Select("select u_update_time FROM user WHERE u_id = #{uId}")
     public LocalDateTime userLastUpdateTime(String uId);
 
     //用户修改头像
-    @Update("UPDATE user set u_head_portrait = #{newDir} WHERE u_id = #{id}")
-    public boolean updateHeadPortrait(@Param("id") int uid, @Param("newDir") String newName);
+//    @Update("UPDATE user set u_head_portrait = #{newDir} WHERE u_id = #{id}")
+//    public boolean updateHeadPortrait(@Param("id") int uid, @Param("newDir") String newName);
+
 }

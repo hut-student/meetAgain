@@ -19,6 +19,6 @@ class UserControllerTest {
 
     @Test
     void verificationLogin() {
-        System.out.println(userController.verificationLogin("3",1581826297218L,"480F1BEEE2154F5924DC8067C301BA6B"));
+        System.out.println(userController.updateUser("1",1582789545112L, "A199ABAED0B2375F58CF6EA0F60B50C8","{\"uId\":1,\"uSex\":1,\"uUpdateTime\":\"2020-02-27T15:45:45.203\"}"));
     }
 }

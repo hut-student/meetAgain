@@ -26,6 +26,12 @@ public class TeleService {
     @Value("${tele.appcode}")
     private String teleAppcode;
 
+    @Value("${upload.feedBack.dir}")
+    private String webSite;
+
+    @Value("${upload.headPortrait.dir}")
+    private String headPortraitDir;
+
     //检查是否有这个用户
     public boolean selectUser(String tele) {
         return (userDAO.findOneUser(tele) == null) ? false : true;
@@ -33,7 +39,9 @@ public class TeleService {
 
     //电话号码登录
     public User showOneUser(String tele) {
-        return userDAO.TeleLogin(tele);
+        User user = userDAO.TeleLogin(tele);
+        user.setuHeadPortrait("https://" + webSite + headPortraitDir + user.getuHeadPortrait());
+        return user;
     }
 
     //验证码登录

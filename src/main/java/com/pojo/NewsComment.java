@@ -26,8 +26,21 @@ public class NewsComment implements Serializable {
     @TableField(exist = false)
     private String uHeadPortrait;
     @TableField(exist = false)
+    private Integer commentSum;
+    @TableField(exist = false)
     private int replySum;
 
+    public NewsComment(int xwcId, int uId, String xwId, String xwcComment, int xwcFloor, Long time, String uName, String uHeadPortrait, int replySum) {
+        this.xwcId = xwcId;
+        this.uId = uId;
+        this.xwId = xwId;
+        this.xwcComment = xwcComment;
+        this.xwcFloor = xwcFloor;
+        this.time = time;
+        this.uName = uName;
+        this.uHeadPortrait = uHeadPortrait;
+        this.replySum = replySum;
+    }
 
     @Override
     public String toString() {
@@ -53,6 +66,14 @@ public class NewsComment implements Serializable {
         this.xwId = xwId;
         this.xwcComment = xwcComment;
         this.xwcTime = xwcTime;
+    }
+
+    public Integer getCommentSum() {
+        return commentSum;
+    }
+
+    public void setCommentSum(Integer commentSum) {
+        this.commentSum = commentSum;
     }
 
     public int getReplySum() {
