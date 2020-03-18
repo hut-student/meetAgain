@@ -13,10 +13,13 @@ import com.pojo.UserRelationship;
 import com.tencentcloudapi.vpc.v20170312.models.Ip6Rule;
 import com.utils.MyMiniUtils;
 import com.utils.MyPage;
+import com.vo.MessageBean;
 import com.vo.ResponseBean;
+import com.vo.SystemMessageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 import sun.util.resources.cldr.ar.CalendarData_ar_YE;
 
 import java.time.LocalDateTime;
@@ -29,9 +32,6 @@ public class UserRelationshipService {
 
     @Autowired
     private CommentDAO commentDAO;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private UserDAO userDAO;
@@ -173,7 +173,7 @@ public class UserRelationshipService {
             if (finalSearchs.size() >= limit) {
                 break;
             }
-            if(searches.size() == 0 && finalSearchs.size() > 0){
+            if (searches.size() == 0 && finalSearchs.size() > 0) {
                 break;
             }
             if (searches.size() == 0) {
@@ -183,7 +183,7 @@ public class UserRelationshipService {
             firstI = firstI + 50;
         }
         List<Search> abcSearch = new ArrayList<>();
-        for(Search search : finalSearchs){
+        for (Search search : finalSearchs) {
             /*User user = userDAO.selectById(search.getuId());
             search.setPictures(JSON.parseArray(search.getsPhoto(), String.class));
             for(String dir : search.getPictures()){
@@ -263,9 +263,9 @@ public class UserRelationshipService {
             Integer ageBegin;
             Integer ageEnding;
             QueryWrapper queryWrapper = new QueryWrapper();
-            if(age == null){
+            if (age == null) {
                 queryWrapper.eq("s_type", 1);
-            }else {
+            } else {
                 queryWrapper.eq("s_type", 0);
             }
 
@@ -294,7 +294,7 @@ public class UserRelationshipService {
             queryWrapper.last("limit " + firstI + ",10");
             List<Search> newSearches = searchDAO.selectList(queryWrapper);
             List<Search> finalSearchs = new ArrayList<>();
-            for(Search search : newSearches){
+            for (Search search : newSearches) {
                 finalSearchs.add(searchFill(search));
             }
             if (newSearches.size() == 0) {
@@ -313,14 +313,14 @@ public class UserRelationshipService {
 
 
     //填充search对象
-    public Search searchFill(Search search){
+    public Search searchFill(Search search) {
         User user = userDAO.selectById(search.getuId());
         search.setNickName(user.getuName());
         search.setCommentNum(commentDAO.selectCommentSum(search.getsId()));
         search.setPictures(JSON.parseArray(search.getsPhoto(), String.class));
         List<String> newsPhotos = new ArrayList<>();
-        if(search.getPictures() != null){
-            for(String dir : search.getPictures()){
+        if (search.getPictures() != null) {
+            for (String dir : search.getPictures()) {
                 newsPhotos.add("https://" + webSite + findPeople + dir);
             }
             search.setPictures(newsPhotos);
@@ -328,4 +328,148 @@ public class UserRelationshipService {
         search.setHeader("https://" + webSite + headPhoto + search.getHeader());
         return search;
     }
+
+
+    //推送关注自己的人
+    public MessageBean findAttentionMyself(Integer uId) {
+        try {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("himself_uid", uId);
+            queryWrapper.eq("sum", 0);
+            List<UserRelationship> userRelationshipList = userRelationshipDAO.selectList(queryWrapper);
+            if (userRelationshipList == null || userRelationshipList.size() == 0) {
+                return null;
+            }
+            ArrayList<SystemMessageBean> systemMessageBeanArrayList = new ArrayList<>();
+            for (UserRelationship userRelationship : userRelationshipList) {
+                SystemMessageBean systemMessageBean = new SystemMessageBean();
+                User user = userDAO.selectById(userRelationship.getMyselfUid());
+                //直接在这里判断是否双关
+                queryWrapper = new QueryWrapper();
+                queryWrapper.eq("myself_uid", uId);
+                queryWrapper.eq("himself_uid", user.getuId());
+                if (userRelationshipDAO.selectOne(queryWrapper) != null) {
+                    //自己也关注了对方
+                    systemMessageBean.setType(2);
+                } else {
+                    //自己之前没有关注对方
+                    systemMessageBean.setType(1); //被自己未关注的人加了好友
+                }
+                systemMessageBean.setTitle("好友关注");
+                systemMessageBean.setTime(System.currentTimeMillis());
+                systemMessageBean.setTargetUid(userRelationship.getMyselfUid());
+                systemMessageBean.setUid(userRelationship.getHimselfUid());
+                systemMessageBean.setRead(false);
+                systemMessageBean.setHeader("https://" + webSite + headPhoto + user.getuHeadPortrait());
+                systemMessageBean.setNickName(user.getuName());
+
+                systemMessageBeanArrayList.add(systemMessageBean);
+            }
+            //将数据库中的sum进行更爱
+            queryWrapper = new QueryWrapper();
+            queryWrapper.eq("himself_uid", uId);
+            UserRelationship userRelationship = new UserRelationship();
+            userRelationship.setSum(1);
+            userRelationshipDAO.update(userRelationship, queryWrapper);
+            //构件返回值
+            MessageBean messageBean = new MessageBean();
+            messageBean.setType(4);
+            messageBean.setSystemMessageArray(systemMessageBeanArrayList);
+
+            return messageBean;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //查询用户是否关注了另一个用户
+    public ResponseBean findOneRelationship(Integer uId, Integer otherUid) {
+        try {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("myself_uid", uId);
+            queryWrapper.eq("himself_uid", otherUid);
+            if (userRelationshipDAO.selectOne(queryWrapper) != null) {
+                //代表此时该用户关注了另一个用户
+                ResponseBean responseBean = new ResponseBean();
+                responseBean.setCode(200);
+                responseBean.setData(true);
+                System.out.println(responseBean);
+                return responseBean;
+            } else {
+                //未关注
+                ResponseBean responseBean = new ResponseBean();
+                responseBean.setCode(200);
+                responseBean.setData(false);
+                System.out.println(responseBean);
+                return responseBean;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseBean(400, e.getMessage(), null);
+        }
+    }
+
+    /**
+     * 查询用户关注之类的用户公开信息
+     * @param uId
+     * @param i
+     * 当i等于1时，查询目标uid用户关注的所有用户
+     * 当i等于0时，查询关注目标uid用户的所有用户(被关注 查询)
+     * @return
+     */
+    public ResponseBean findUserRelationship(Integer uId, int i) {
+        try {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            if(i == 1){
+                queryWrapper.eq("myself_uid", uId);
+            }else if(i == 0){
+                queryWrapper.eq("himself_uid", uId);
+            }
+            List<UserRelationship> userRelationships = userRelationshipDAO.selectList(queryWrapper);
+            if (userRelationships != null && userRelationships.size() > 0) {
+                //有关注的用户,获得这些用户的公开信息
+                List<User> users = new ArrayList<>();
+                for (UserRelationship userRelationship : userRelationships) {
+                    User user = null;
+                    if(i == 1){
+                        user = userDAO.findPublicInfo(userRelationship.getHimselfUid());
+                    }else{
+                        user = userDAO.findPublicInfo(userRelationship.getMyselfUid());
+                    }
+                    users.add(user);
+                }
+                return new ResponseBean(200, "查询成功", users);
+            }else {
+                //没有关注的用户
+                return new ResponseBean(300,"list为空", null);
+            }
+        } catch (Exception e) {
+            return new ResponseBean(400, e.getMessage(), null);
+        }
+    }
+
+
+    /**
+     *  相互关注 查询
+     * @param uId
+     * @return
+     */
+    public ResponseBean findMutualConcern(Integer uId){
+        try {
+            List<User> userList = userRelationshipDAO.findMutualConcern(uId);
+            System.out.println();
+            if(userList != null && userList.size() > 0){
+                return new ResponseBean(200,"查询成功", userList);
+            }else {
+                return new ResponseBean(300, "list为空", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseBean(400, e.getMessage(),null);
+        }
+    }
+
+
+
 }

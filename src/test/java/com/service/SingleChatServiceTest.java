@@ -1,5 +1,6 @@
 package com.service;
 
+import com.alibaba.fastjson.JSON;
 import com.boot.MainBoot;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,6 @@ class SingleChatServiceTest {
 
     @Test
     void insertOneChat() {
-        System.out.println(singleChatService.insertOneChat(1,2,"哈哈哈，小家伙"));
+       System.out.println(singleChatService.findUserSingleChat(1));
     }
 }

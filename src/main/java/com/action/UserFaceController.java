@@ -4,6 +4,7 @@ import com.service.UserFaceService;
 import com.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,8 +52,8 @@ public class UserFaceController {
 
     //搜索人脸
     @RequestMapping("searchFace")
-    public ResponseBean SearchFaces(Integer uId, MultipartFile file){
-        return userFaceService.SearchFaces(file);
+    public ResponseBean SearchFaces(@RequestParam(defaultValue = "abc") String uId, MultipartFile file){
+        return userFaceService.SearchFaces(uId, file);
     }
 
     //用户id集合找用户的上传图片

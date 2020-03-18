@@ -106,4 +106,34 @@ public class SearchController {
         return searchService.findUserSearch(type, uId, page, 5);
     }
 
+    /**
+     * 收藏寻人或寻物的帖子
+     * @param uId
+     * @param sId
+     * @param star
+     * @return
+     */
+    @RequestMapping("star")
+    public ResponseBean changeStart(Integer uId, Integer sId, Integer star){
+        try {
+            return searchService.changeStar(uId, sId, star);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseBean(400,e.getMessage(), null);
+        }
+    }
+
+
+    /**
+     * 对用户自己发表的寻人/寻物帖子进行删除
+     * @param uId
+     * @param sId
+     * @return
+     */
+    public ResponseBean deleteSearch(Integer uId, Integer sId){
+        return searchService.deleteSearch(uId, sId);
+    }
+
+
+
 }

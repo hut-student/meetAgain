@@ -1,9 +1,7 @@
 package com.config;
 
 import com.action.MyWebSocketController;
-import com.service.GroupChatService;
-import com.service.SingleChatService;
-import com.service.UserGroupsService;
+import com.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +29,16 @@ public class WebSocketConfig{
     @Autowired
     public void setUserGroupsService(UserGroupsService userGroupsService){
         MyWebSocketController.userGroupsService = userGroupsService;
+    }
+
+    @Autowired
+    public void setUseFaceRecodeService(UseFaceRecordService useFaceRecordService){
+        MyWebSocketController.useFaceRecordService = useFaceRecordService;
+    }
+
+    @Autowired
+    public void setUserRelationshipService(UserRelationshipService userRelationshipService){
+        MyWebSocketController.userRelationshipService = userRelationshipService;
     }
 
 }

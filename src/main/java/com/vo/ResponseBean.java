@@ -19,6 +19,9 @@ public class ResponseBean {
                 '}';
     }
 
+    public ResponseBean() {
+    }
+
     public String getEnCode() {
         return enCode;
     }

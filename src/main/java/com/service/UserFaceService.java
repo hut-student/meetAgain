@@ -2,15 +2,8 @@ package com.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.dao.FaceGroupInfoDAO;
-import com.dao.FaceGroupUserDAO;
-import com.dao.UserDAO;
-import com.dao.UserFaceDAO;
-import com.google.gson.annotations.JsonAdapter;
-import com.pojo.FaceGroupInfo;
-import com.pojo.FaceGroupUser;
-import com.pojo.User;
-import com.pojo.UserFace;
+import com.dao.*;
+import com.pojo.*;
 import com.tencentcloudapi.iai.v20180301.models.*;
 import com.utils.MyMiniUtils;
 import com.vo.ResponseBean;
@@ -19,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +20,9 @@ import java.util.Map;
 
 @Service
 public class UserFaceService {
+
+    @Autowired
+    private UseFaceRecordDAO useFaceRecordDAO;
 
     @Autowired
     private UserFaceUtils userFaceUtils;
@@ -226,7 +222,8 @@ public class UserFaceService {
     }
 
     //搜索人脸
-    public ResponseBean SearchFaces(MultipartFile file) {
+    public ResponseBean SearchFaces(String uId, MultipartFile file) {
+
         if (file.isEmpty() == true) {
             return new ResponseBean(404, "缺少参数", null);
         }
@@ -259,6 +256,17 @@ public class UserFaceService {
             userFaces.get(i).setHeader("https://" + website + headPhoto + user.getuHeadPortrait());//修改头像
             userFaces.get(i).setNickName(user.getuName());
             userFaces.get(i).setIntroduce(user.getuSignature());
+        }
+        if(!uId.equals("abc")){
+            //有用户id时，进行存入数据库操作
+            UseFaceRecord useFaceRecord = new UseFaceRecord();
+            useFaceRecord.setSum(0);
+            useFaceRecord.setTime(LocalDateTime.now());
+            useFaceRecord.setUseUserId(Integer.valueOf(uId));
+            for(UserFace userFace : userFaces){
+                useFaceRecord.setSaoUserId(userFace.getUid());
+                useFaceRecordDAO.insert(useFaceRecord);
+            }
         }
         return new ResponseBean(200, "搜索成功", userFaces);
 

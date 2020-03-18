@@ -2,6 +2,8 @@ package com.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dao.GroupInfoDAO;
 import com.dao.UserDAO;
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService extends ServiceImpl<UserDAO, User> {
@@ -124,7 +129,7 @@ public class UserService extends ServiceImpl<UserDAO, User> {
             String uuid = MyMiniUtils.randomNumber("0123456789", n);
             if (groupInfoDAO.giUuidCheck(uuid) != null && uuid.charAt(0) != '0') {
                 i++;
-                if(i >= 4){
+                if (i >= 4) {
                     n++;
                 }
                 continue;
@@ -149,56 +154,57 @@ public class UserService extends ServiceImpl<UserDAO, User> {
     public ResponseBean joinGroup(int uId, Integer groupId) {
         if (groupId != null) {
             GroupInfo groupInfo = groupInfoDAO.selectById(groupId);
-            if(groupInfo == null){//判断是否有这个群
-                return new ResponseBean(404,"请输入正确的群号",null);
+            if (groupInfo == null) {//判断是否有这个群
+                return new ResponseBean(404, "请输入正确的群号", null);
             }
-            if(userGroupsDAO.insert(new UserGroups(uId, groupId)) == 1){
-                return new ResponseBean(200,"加入成功",null);
-            }else {
-                return new ResponseBean(405,"参数错误，加入失败", null);
+            if (userGroupsDAO.insert(new UserGroups(uId, groupId)) == 1) {
+                return new ResponseBean(200, "加入成功", null);
+            } else {
+                return new ResponseBean(405, "参数错误，加入失败", null);
             }
         } else {
-            return new ResponseBean(403, "请输入群号",null);
+            return new ResponseBean(403, "请输入群号", null);
         }
     }
 
     //用户关注其他用户
-    public ResponseBean userRelationshipChange(Integer uId, Integer himselfUid, Integer follow){
-        if(userDAO.selectById(uId) == null){
-            return new ResponseBean(400,"用户不存在", null);
+    public ResponseBean userRelationshipChange(Integer uId, Integer himselfUid, Integer follow) {
+        if (userDAO.selectById(uId) == null) {
+            return new ResponseBean(400, "用户不存在", null);
         }
-        if(userDAO.selectById(himselfUid) == null){
-            return new ResponseBean(400,"目标用户不存在", null);
+        if (userDAO.selectById(himselfUid) == null) {
+            return new ResponseBean(400, "目标用户不存在", null);
         }
         try {
-            if(follow == 0){
+            if (follow == 0) {
                 //关注对象
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("myself_uid", uId);
                 queryWrapper.eq("himself_uid", himselfUid);
-                if(userRelationshipDAO.selectOne(queryWrapper)  != null){
-                    return new ResponseBean(200,"成功添加", null);
-                }else {
+                if (userRelationshipDAO.selectOne(queryWrapper) != null) {
+                    return new ResponseBean(200, "成功添加", null);
+                } else {
                     UserRelationship userRelationship = new UserRelationship();
                     userRelationship.setMyselfUid(uId);
                     userRelationship.setHimselfUid(himselfUid);
-                    if(userRelationshipDAO.insert(userRelationship) == 1){
-                        return new ResponseBean(200,"添加成功", null);
+                    userRelationship.setSum(0);
+                    if (userRelationshipDAO.insert(userRelationship) == 1) {
+                        return new ResponseBean(200, "添加成功", null);
                     }
                 }
-            }else if(follow == 1){
+            } else if (follow == 1) {
                 //取消关注
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("myself_uid", uId);
                 queryWrapper.eq("himself_uid", himselfUid);
-                if(userRelationshipDAO.selectOne(queryWrapper) != null){
+                if (userRelationshipDAO.selectOne(queryWrapper) != null) {
                     //当数据库中有他们的记录
-                    if(userRelationshipDAO.delete(queryWrapper) == 1){
+                    if (userRelationshipDAO.delete(queryWrapper) == 1) {
                         return new ResponseBean(200, "取消关注成功", null);
-                    }else {
+                    } else {
                         return new ResponseBean(400, "取消关注失败", null);
                     }
-                }else {
+                } else {
                     //当数据库中没有他们的记录
                     return new ResponseBean(200, "取消关注成功", null);
                 }
@@ -206,9 +212,64 @@ public class UserService extends ServiceImpl<UserDAO, User> {
             return new ResponseBean(404, "参数异常", null);
         } catch (Exception e) {
             e.printStackTrace();
-            return  new ResponseBean(500, "服务器异常", null);
+            return new ResponseBean(500, "服务器异常", null);
         }
     }
 
+    //用户id或电话号码查公共信息
+    public ResponseBean findUserPublicInfo(Integer uId, String tele) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        //公开信息
+        queryWrapper.select("u_id", "u_name", "u_sex", "u_birthday", "u_head_portrait", "u_province", "u_city", "u_district", "u_address", "u_volunteer");
+        queryWrapper.eq("u_id", uId);
+        queryWrapper.or();
+        queryWrapper.eq("u_tele", tele);
+        List<User> users = userDAO.selectList(queryWrapper);
+        if (users != null && users.size() > 0) {
+            //表示有符合标准的用户
+            return new ResponseBean(200, "查询成功", users);
+        } else {
+            //没有符合保证的用户
+            return new ResponseBean(300, "id没有符合的用户", null);
+        }
+    }
+
+    //使用字符串，查看是不是昵称或者真实姓名
+    public ResponseBean findUserPublicInfo(String name, Integer page) {
+        Page<User> p = new Page<>(page, 10);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.select("u_id", "u_name", "u_sex", "u_birthday", "u_head_portrait", "u_province", "u_city", "u_district", "u_address", "u_volunteer");
+        queryWrapper.like("u_name", name);
+        queryWrapper.or();
+        queryWrapper.like("u_real_name", name);
+        IPage<User> iPage = userDAO.selectPage(p, queryWrapper);
+        if (iPage.getRecords() != null && iPage.getRecords().size() > 0) {
+            //有符合标准的用户
+            return new ResponseBean(200, "查询成功", iPage.getRecords());
+        } else {
+            return new ResponseBean(300, "list为空", null);
+        }
+    }
+
+    //根据关键字来找用户
+    public ResponseBean keyWordSelectUser(String keyword, Integer page) throws Exception {
+        //验证是不是id
+        int uId = Integer.MAX_VALUE; //2147483647
+        if (keyword.length() <= 11) {
+            try {
+                if (MyMiniUtils.isChinaPhoneLegal(keyword)) {
+                    //是电话号码
+                    return findUserPublicInfo(uId, keyword);
+                }
+                //不是电话号码
+                uId = Integer.parseInt(keyword);
+                return findUserPublicInfo(uId, keyword);
+            } catch (Exception e) {
+                System.out.println("不是id，也不是电话号码");
+            }
+        }
+        //检查是不是昵称或真实姓名
+        return findUserPublicInfo(keyword, page);
+    }
 
 }

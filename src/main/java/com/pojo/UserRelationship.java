@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class UserRelationship implements Serializable {
 
@@ -12,6 +13,8 @@ public class UserRelationship implements Serializable {
     private Integer myselfUid;
     private Integer himselfUid;
     private String ur_name;
+    private Integer sum;
+
 
     @Override
     public String toString() {
@@ -20,6 +23,7 @@ public class UserRelationship implements Serializable {
                 ", myselfUid=" + myselfUid +
                 ", himselfUid=" + himselfUid +
                 ", ur_name='" + ur_name + '\'' +
+                ", sum=" + sum +
                 '}';
     }
 
@@ -29,6 +33,14 @@ public class UserRelationship implements Serializable {
     public UserRelationship(Integer myselfUid, Integer himselfUid) {
         this.myselfUid = myselfUid;
         this.himselfUid = himselfUid;
+    }
+
+    public Integer getSum() {
+        return sum;
+    }
+
+    public void setSum(Integer sum) {
+        this.sum = sum;
     }
 
     public Integer getUrId() {

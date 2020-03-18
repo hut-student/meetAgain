@@ -2,9 +2,9 @@ package com.vo;
 
 import java.io.Serializable;
 
-public class SocketMsg implements Serializable {
+public class ImMessageBean implements Serializable {
 
-    private Integer imId;
+    private String imId;
     private Long time;
     private Integer uId;    //发送者id
     private Integer toUid;  //接受者id
@@ -12,11 +12,12 @@ public class SocketMsg implements Serializable {
     private boolean isRead; //是否已读
     private String header;  //头像
     private String nickName;//发送者的昵称
+    private Integer targetUid; //这条记录发给哪个用户
 
     @Override
     public String toString() {
-        return "SocketMsg{" +
-                "imId=" + imId +
+        return "ImMessageBean{" +
+                "imId='" + imId + '\'' +
                 ", time=" + time +
                 ", uId=" + uId +
                 ", toUid=" + toUid +
@@ -24,14 +25,23 @@ public class SocketMsg implements Serializable {
                 ", isRead=" + isRead +
                 ", header='" + header + '\'' +
                 ", nickName='" + nickName + '\'' +
+                ", targetUid='" + targetUid + '\'' +
                 '}';
     }
 
-    public Integer getImId() {
+    public Integer getTargetUid() {
+        return targetUid;
+    }
+
+    public void setTargetUid(Integer targetUid) {
+        this.targetUid = targetUid;
+    }
+
+    public String getImId() {
         return imId;
     }
 
-    public void setImId(Integer imId) {
+    public void setImId(String imId) {
         this.imId = imId;
     }
 

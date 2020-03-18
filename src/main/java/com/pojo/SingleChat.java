@@ -12,13 +12,12 @@ public class SingleChat implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Integer scId;
+    private String scImId;
     private Integer fromUid;
     private Integer toUid;
     private String scContent;
     private LocalDateTime scTime;
 
-    @TableField(exist = false)
-    private Long putTime;
 
 
     public SingleChat() {
@@ -35,12 +34,20 @@ public class SingleChat implements Serializable {
     public String toString() {
         return "SingleChat{" +
                 "scId=" + scId +
+                ", scImId='" + scImId + '\'' +
                 ", fromUid=" + fromUid +
                 ", toUid=" + toUid +
                 ", scContent='" + scContent + '\'' +
                 ", scTime=" + scTime +
-                ", putTime=" + putTime +
                 '}';
+    }
+
+    public String getScImId() {
+        return scImId;
+    }
+
+    public void setScImId(String scImId) {
+        this.scImId = scImId;
     }
 
     public Integer getScId() {
@@ -80,15 +87,6 @@ public class SingleChat implements Serializable {
     }
 
     public void setScTime(LocalDateTime scTime) {
-        this.putTime = MyMiniUtils.timeMillisChangeLocalDateTime(scTime);
         this.scTime = scTime;
-    }
-
-    public Long getPutTime() {
-        return putTime;
-    }
-
-    public void setPutTime(Long putTime) {
-        this.putTime = putTime;
     }
 }

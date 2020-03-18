@@ -53,4 +53,11 @@ public interface UserDAO extends BaseMapper<User> {
 //    @Update("UPDATE user set u_head_portrait = #{newDir} WHERE u_id = #{id}")
 //    public boolean updateHeadPortrait(@Param("id") int uid, @Param("newDir") String newName);
 
+    /**
+     * 获得用户公开信息
+     * @param uId
+     * @return
+     */
+    @Select("SELECT u_id,u_name,u_sex,u_birthday,u_head_portrait,u_province,u_city,u_district,u_address,u_volunteer FROM user WHERE u_id = #{uId}")
+    public User findPublicInfo(Integer uId);
 }

@@ -90,12 +90,22 @@ public class UserController {
 
     //用户关注
     @RequestMapping("user/follow")
-    public ResponseBean userRelationshipChange(Integer uId, Integer targetUid, Integer follow){
+    public ResponseBean userRelationshipChange(Integer uId, Integer targetUId, Integer follow){
         try {
-            return userService.userRelationshipChange(uId, targetUid, follow);
+            return userService.userRelationshipChange(uId, targetUId, follow);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseBean(404, "参数异常", null);
+        }
+    }
+
+    @RequestMapping("user/search")
+    public ResponseBean keyWordFindUser(String keyword, Integer page){
+        try {
+            return userService.keyWordSelectUser(keyword, page);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseBean(400,"异常如下" + e.getMessage(), null);
         }
     }
 }

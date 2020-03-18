@@ -1,6 +1,7 @@
 package com.action;
 
 import com.pojo.UserRelationship;
+import com.service.SearchService;
 import com.service.UserRelationshipService;
 import com.vo.ResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class HomeController {
 
     @Autowired
     private UserRelationshipService userRelationshipService;
+
+    @Autowired
+    private SearchService searchService;
 
     //根据用户的uid获取他关注的人发表的说说，以发布时间为顺序，内容混合寻人和寻物
     @RequestMapping("follow")
@@ -45,6 +49,12 @@ public class HomeController {
     @RequestMapping("people")
     public ResponseBean findSearchPeople(@RequestParam(defaultValue = "abc") String time, @RequestParam(defaultValue = "abc") String age, @RequestParam(defaultValue = "abc") String province, @RequestParam(defaultValue = "abc") String city, @RequestParam(defaultValue = "abc") String district, Integer page) {
         return userRelationshipService.findSearchPeople(time, age, province, city, district, page);
+    }
+
+    //根据关键词对寻人/寻物的帖子进行模糊搜索
+    @RequestMapping("search")
+    public ResponseBean keyWordFindSearch(String keyword, Integer page){
+        return searchService.keyWordFindSearch(keyword, page);
     }
 
 

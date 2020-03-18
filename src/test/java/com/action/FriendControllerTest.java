@@ -1,4 +1,4 @@
-package com.service;
+package com.action;
 
 import com.boot.MainBoot;
 import org.junit.jupiter.api.Test;
@@ -11,12 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MainBoot.class)
-class UserServiceTest {
+class FriendControllerTest {
 
     @Autowired
-    private UserService userService;
+    private FriendController friendController;
 
     @Test
-    void updateUser() {
+    void findMutualConcern() {
+        System.out.println(friendController.findMutualConcern(1));
     }
 }

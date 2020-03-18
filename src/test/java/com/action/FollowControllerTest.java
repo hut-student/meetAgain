@@ -1,4 +1,4 @@
-package com.service;
+package com.action;
 
 import com.boot.MainBoot;
 import org.junit.jupiter.api.Test;
@@ -11,12 +11,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MainBoot.class)
-class UserServiceTest {
+class FollowControllerTest {
 
     @Autowired
-    private UserService userService;
+    private FollowController followController;
+
+    @Autowired
+    private FanController fanController;
 
     @Test
-    void updateUser() {
+    public void test(){
+        System.out.println(fanController.followThisUserOfAllUserPublicInfo(3));
     }
 }

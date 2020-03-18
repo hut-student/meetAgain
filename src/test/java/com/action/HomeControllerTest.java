@@ -1,4 +1,4 @@
-package com.service;
+package com.action;
 
 import com.boot.MainBoot;
 import org.junit.jupiter.api.Test;
@@ -11,12 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MainBoot.class)
-class UserServiceTest {
+class HomeControllerTest {
 
     @Autowired
-    private UserService userService;
+    private HomeController homeController;
 
     @Test
-    void updateUser() {
+    void keyWordFindSearch() {
+        System.out.println(homeController.keyWordFindSearch("省",2));
     }
 }

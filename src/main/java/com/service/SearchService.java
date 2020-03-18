@@ -8,10 +8,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dao.CommentDAO;
 import com.dao.SearchDAO;
 import com.dao.UserDAO;
+import com.dao.UserStarDAO;
 import com.google.gson.annotations.JsonAdapter;
 import com.pojo.Comment;
 import com.pojo.Search;
 import com.pojo.User;
+import com.pojo.UserStar;
 import com.utils.MyMiniUtils;
 import com.utils.MyPage;
 import com.vo.ResponseBean;
@@ -38,6 +40,9 @@ public class SearchService extends ServiceImpl<SearchDAO, Search> {
 
     @Autowired
     private CommentDAO commentDAO;
+
+    @Autowired
+    private UserStarDAO userStarDAO;
 
     //用户头像
     @Value("${upload.headPortrait.dir}")
@@ -103,12 +108,6 @@ public class SearchService extends ServiceImpl<SearchDAO, Search> {
         }
     }
 
-    //根据条件寻找寻人信息
-//    public ResponseBean selectSearch(){
-//
-//
-//    }
-
     //获取用户自己的历史发布信息
     public ResponseBean findUserSearch(Integer type, Integer uId, Integer page, Integer limit) {
         try {
@@ -144,7 +143,118 @@ public class SearchService extends ServiceImpl<SearchDAO, Search> {
         }
     }
 
+    /**
+     * 改变寻人寻物收藏
+     * @param uId
+     * @param sId
+     * @param star
+     * @return
+     */
+    public ResponseBean changeStar(Integer uId, Integer sId, Integer star) throws Exception{
+        if(userDAO.selectById(uId) == null){
+            return new ResponseBean(401,"该用户不存在",null);
+        }
+        if(searchDAO.selectById(sId) == null){
+            return new ResponseBean(402,"该帖子不存在", null);
+        }
+        QueryWrapper<UserStar> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("u_id", uId);
+        queryWrapper.eq("s_id", sId);
+        if(star == 0){
+            //收藏该帖子
+            if(userStarDAO.selectOne(queryWrapper) != null){
+                //表示之前已经收藏了该帖子
+                return  new ResponseBean(200, "已收藏该帖子", null);
+            }else {
+                //之前未收藏该帖子
+                UserStar userStar = new UserStar();
+                userStar.setuId(uId);
+                userStar.setsId(sId);
+                userStar.setStar(0);
+                if(userStarDAO.insert(userStar) == 1){
+                    //收藏成功
+                    return new ResponseBean(200,"成功收藏", null);
+                }else {
+                    //收藏失败
+                    return new ResponseBean(400,"收藏失败", null);
+                }
+            }
+        }else if(star == 1){
+            //取消收藏该帖子
+            if(userStarDAO.selectOne(queryWrapper) == null){
+                //表示数据库已经删去了这个记录
+                return new ResponseBean(200,"已经取消收藏了", null);
+            }else {
+                //还未删除这条记录
+                if(userStarDAO.delete(queryWrapper) == 1){
+                    //删除成功
+                    return new ResponseBean(200, "取消收藏成功", null);
+                }else {
+                    return new ResponseBean(400,"取消收藏失败", null);
+                }
+            }
+        }
+        return new ResponseBean(403,"收藏参数错误", null);
+    }
 
 
+    //根据关键词对寻人/寻物的帖子进行模糊搜索
+    public ResponseBean keyWordFindSearch(String keyWord, Integer page){
+        try {
+            //如果这个是search的id号
+            int sId;
+            ArrayList<Search> searchArrayList = new ArrayList<>();
+            try {
+                sId = Integer.valueOf(keyWord);
+                Search search = searchDAO.selectById(sId);
+                if(search != null && page == 1){
+                    searchArrayList.add(search);
+                    return new ResponseBean(200, "查询成功", searchArrayList);
+                }else {
+                    return new ResponseBean(300,"List为空，找不到了",null);
+                }
+            } catch (Exception e) {
+                System.out.println("不是Search的id");
+            }
+            //如果是其他的字符串（标题、省份、城市、区、街道）
+            QueryWrapper<Search> queryWrapper = new QueryWrapper();
+            queryWrapper.like(true,"s_title", keyWord).or();
+            queryWrapper.like(true,"s_province", keyWord).or();
+            queryWrapper.like(true, "s_city", keyWord).or();
+            queryWrapper.like(true, "s_district", keyWord).or();
+            queryWrapper.like(true, "s_address", keyWord);
+            queryWrapper.orderByDesc("s_time");
+            Page<Search> p = new Page<>(page, 10);
+            IPage<Search> iPage = searchDAO.selectPage(p, queryWrapper);
+            if(iPage.getRecords() != null && iPage.getRecords().size() > 0){
+                return new ResponseBean(200,"查询成功", iPage.getRecords());
+            }else {
+                return new ResponseBean(300,"List为空", null);
+            }
+        } catch (Exception e) {
+            return new ResponseBean(400,e.getMessage(), null);
+        }
+    }
 
+    //对用户自己发表的寻人/寻物帖子进行删除
+    public ResponseBean deleteSearch(Integer uId, Integer sId){
+        try {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("u_id", uId);
+            queryWrapper.eq("s_id", sId);
+            if(searchDAO.selectOne(queryWrapper) != null){
+                if(searchDAO.delete(queryWrapper) == 1){
+                    //删除成功
+                    return new ResponseBean(200,"删除成功", null);
+                }else {
+                    return new ResponseBean(400,"数据库异常", null);
+                }
+            }else {
+                //未找到这条记录
+                return new ResponseBean(200,"数据库未找到", null);
+            }
+        } catch (Exception e) {
+            return new ResponseBean(400,e.getMessage(),null);
+        }
+    }
 }
