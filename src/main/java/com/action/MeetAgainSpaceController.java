@@ -97,6 +97,6 @@ public class MeetAgainSpaceController {
      */
     @RequestMapping("obtainComment")
     public ResponseBean findComment(String communityId, Integer page){
-
+        return meetAgainSpaceService.findComment(communityId, page);
     }
 }
